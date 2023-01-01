@@ -11,6 +11,8 @@ pico_sdk_init()
 
 add_executable(irq irq.c)
 
+pico_generate_pio_header(irq ${CMAKE_CURRENT_LIST_DIR}/count.pio)
+
 pico_set_program_name(irq "irq")
 pico_set_program_version(irq "0.1")
 

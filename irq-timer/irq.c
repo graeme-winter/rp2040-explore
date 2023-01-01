@@ -39,7 +39,7 @@ int main() {
   gpio_set_irq_enabled_with_callback(IN, mask, true, &irq_callback);
 
   uint32_t offset = pio_add_program(pio0, &count_program);
-  count_program_init(pio0, 0, offset_0, IN);
+  count_program_init(pio0, 0, offset, IN);
   pio_sm_set_enabled(pio0, 0, true);
 
   while (true) {
