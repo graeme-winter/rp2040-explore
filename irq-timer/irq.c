@@ -20,7 +20,7 @@ volatile uint32_t dt;
 
 void __not_in_flash_func(irq_callback)(uint32_t gpio, uint32_t event) {
   dt = time_us_32() - t0;
-  gpio_xor_mask(1 << GPIO_OUT);
+  gpio_xor_mask(1 << OUT);
 }
 
 int main() {
@@ -34,11 +34,11 @@ int main() {
   gpio_pull_down(IN);
 
   uint32_t mask = GPIO_IRQ_EDGE_RISE;
-  gpio_set_irq_enabled_with_callback(GPIO_IN, mask, true, &irq_callback);
+  gpio_set_irq_enabled_with_callback(IN, mask, true, &irq_callback);
 
   while (true) {
     t0 = time_us_32();
-    gpio_xor_mask(1 << GPIO_OUT);
+    gpio_xor_mask(1 << OUT);
     sleep_ms(1000);
     printf("%d\n", dt);
   }
