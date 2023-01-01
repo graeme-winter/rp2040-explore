@@ -8,21 +8,15 @@
 
 #include "count.pio.h"
 
-// GPIO semaphore - arbitrary as not connected anywhere
+// GPIO semaphores - wired together
 
 #define PIO 17
 #define OUT 18
 #define IN 19
 
-// clock
-
-volatile uint32_t t0;
-volatile uint32_t dt;
-
 // IRQ handler
 
 void __not_in_flash_func(irq_callback)(uint32_t gpio, uint32_t event) {
-  dt = time_us_32() - t0;
   gpio_xor_mask(1 << OUT);
 }
 
@@ -44,10 +38,9 @@ int main() {
   pio_sm_set_enabled(pio0, 0, true);
 
   while (true) {
-    t0 = time_us_32();
     gpio_xor_mask(1 << OUT);
-    sleep_ms(1000);
-    uint32_t count = 0xfffffffe - pio_sm_get_blocking(pio0, 0);
-    printf("%d %d\n", dt, count);
+    sleep_ms(50);
+    uint32_t count = 0xffffffff - pio_sm_get_blocking(pio0, 0);
+    printf("%d cycles\n", 5 * count);
   }
 }
