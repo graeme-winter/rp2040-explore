@@ -16,8 +16,9 @@
 
 // IRQ handler
 
-void __not_in_flash_func(irq_callback)(uint32_t gpio, uint32_t event) {
+void __not_in_flash_func(irq_callback)(void) {
   gpio_xor_mask(1 << OUT);
+  gpio_acknowledge_irq(IN, IO_IRQ_BANK0);
 }
 
 int main() {
@@ -31,7 +32,9 @@ int main() {
   gpio_pull_down(IN);
 
   uint32_t mask = GPIO_IRQ_EDGE_RISE;
-  gpio_set_irq_enabled_with_callback(IN, mask, true, &irq_callback);
+  irq_set_exclusive_handler(IO_IRQ_BANK0, irq_callback);
+  gpio_set_irq_enabled(IN, mask, true);
+  irq_set_enabled(IO_IRQ_BANK0, true);
 
   uint32_t offset = pio_add_program(pio0, &count_program);
   count_program_init(pio0, 0, offset, PIO);
