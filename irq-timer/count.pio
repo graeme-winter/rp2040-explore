@@ -7,13 +7,13 @@
     mov x !null
     wait 1 pin 0
 high:
+    ; this feels a cumbersome way to jmp on pin
     in null 31
     in pins 1
     mov y isr
     jmp !y fall
     jmp x-- high
 fall:
-    nop [1]
     mov isr x
     push
 
@@ -23,7 +23,6 @@ void count_program_init(PIO pio, uint sm, uint offset, uint pin) {
     pio_sm_config c = count_program_get_default_config(offset);
     pio_gpio_init(pio, pin);
     sm_config_set_in_pins(&c, pin);
-    sm_config_set_jmp_pin(&c, pin);
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, false);
     pio_sm_init(pio, sm, offset, &c);
 }
