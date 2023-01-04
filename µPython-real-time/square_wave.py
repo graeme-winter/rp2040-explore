@@ -8,7 +8,6 @@ p0 = Pin(0)
 # counter program using side-set to control output
 @rp2.asm_pio(sideset_init=rp2.PIO.OUT_LOW)
 def square():
-    pull()
     wrap_target()
     mov(x, osr).side(1)
     label("high")
@@ -27,7 +26,10 @@ sm = rp2.StateMachine(0, square, freq=10_000_000, sideset_base=p0)
 #
 # mov() takes one instruction
 # jmp x_dec only jumps when x_dec comes in as zero
+#
+# clock into the osr before program starts
 sm.put(5 - 2)
+sm.exec("pull()")
 
 sm.active(1)
 time.sleep(100)
