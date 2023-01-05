@@ -3,7 +3,7 @@ import rp2
 
 
 p0 = Pin(0, Pin.OUT)
-p0.irq(lambda pin: pin.off(), Pin.IRQ_RISING)
+p0.irq(lambda pin: pin.off(), Pin.IRQ_RISING, hard=True)
 p0.off()
 
 # counter for how many ticks we are high
