@@ -7,8 +7,6 @@ COUNT = 1024
 target = array("H", [0 for j in range(COUNT)])
 source = array("H", [0xFFFF])
 
-print(addressof(target), addressof(source))
-
 # DMA registers
 DMA_BASE = 0x50000000
 CH0_READ_ADDR = DMA_BASE + 0x0
@@ -33,4 +31,4 @@ while mem32[CH0_CTRL_TRIG] & BUSY:
     continue
 
 for t in target:
-    print(t)
+    assert t == 0xFFFF
