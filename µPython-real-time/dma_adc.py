@@ -43,6 +43,10 @@ mem32[CH0_WRITE_ADDR] = address
 mem32[CH0_TRANS_COUNT] = COUNT
 mem32[CH0_CTRL_TRIG] = QUIET + DREQ_ADC + WRITE_INCR + DATA_SIZE + ENABLE
 
+# drain FIFO before we start
+while (mem32[ADC_FCS] >> 16) & 0xF:
+    _ = mem32[ADC_FIFO]
+
 # ADC_FIFO configuration - set threshold, clear, enable DREQ and enable FIFO
 THRESH = 0x1 << 24
 CLEAR = (0x1 << 11) + (0x1 << 10)
