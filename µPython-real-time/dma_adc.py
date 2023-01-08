@@ -1,6 +1,7 @@
 from uctypes import addressof
 from machine import mem32
 from array import array
+import math
 
 # configure the scratch buffer
 COUNT = 1000
@@ -65,7 +66,10 @@ while mem32[CH0_CTRL_TRIG] & BUSY:
 # disable ADC
 mem32[ADC_CS] = 0
 
-# compute mean
+# compute mean and standard deviation
 total = sum(scratch)
+total2 = sum(s*s for s in scratch)
 mean = total / COUNT
-print(mean)
+variance = total2 / COUNT - (mean * mean)
+sd = math.sqrt(variance)
+print(mean, sd)
