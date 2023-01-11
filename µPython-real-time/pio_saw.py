@@ -6,8 +6,8 @@ from uctypes import addressof
 # machine 0 -> signal generator
 # machine 1 -> signal reader
 
-# useful DREQ definitions
-DREQ_PIO0_RX1 = 22
+# useful DREQ definition
+DREQ_PIO0_RX1 = 5
 
 # register definitions
 PIO0_BASE = 0x50200000
@@ -44,7 +44,9 @@ def saw():
 
 
 # auto-push / push on 32 bits to FIFO / join FIFOs
-@asm_pio(autopush=True, push_thresh=32, fifo_join=PIO.JOIN_RX)
+@asm_pio(
+    autopush=True, push_thresh=32, in_shiftdir=PIO.SHIFT_RIGHT, fifo_join=PIO.JOIN_RX
+)
 def eight_bits_in():
     wrap_target()
     in_(pins, 8)
@@ -57,18 +59,18 @@ scratch = bytearray(COUNT)
 
 # set up DMA from PIO ISR
 QUIET = 0x1 << 21
-DREQ = DREQ_PIO0_RX1
+DREQ = DREQ_PIO0_RX1 << 15
 WRITE_INCR = 0x1 << 5
-DATA_SIZE = 0x0
+DATA_SIZE = 0x2 << 2
 ENABLE = 0x1
 
 # clear FIFO
-while mem32[PIO0_FSTAT] & (1 << 9):
+while not (mem32[PIO0_FSTAT] & (1 << 9)):
     _ = mem32[PIO0_RXF1]
 
 mem32[CH0_READ_ADDR] = PIO0_RXF1
 mem32[CH0_WRITE_ADDR] = addressof(scratch)
-mem32[CH0_TRANS_COUNT] = COUNT
+mem32[CH0_TRANS_COUNT] = COUNT // 4
 mem32[CH0_CTRL_TRIG] = QUIET + DREQ + WRITE_INCR + DATA_SIZE + ENABLE
 
 # trigger DMA on DREQ from PIO (1 word depth trigger)
@@ -79,8 +81,10 @@ tick = StateMachine(0, saw, freq=12500, sideset_base=pins[0], out_base=pins[1])
 # are wired for input
 bits = StateMachine(1, eight_bits_in, freq=12500, in_base=pins[0])
 
+# FIXME I should probably reset the clocks here
+
 # activate
-PIO0_CTRL = 0x3
+mem32[PIO0_CTRL] = 0x3
 
 # wait for DMA completion
 BUSY = 0x1 << 24
@@ -89,7 +93,7 @@ while mem32[CH0_CTRL_TRIG] & BUSY:
     continue
 
 # stop
-PIO0_CTRL = 0
+mem32[PIO0_CTRL] = 0
 
 for j in range(COUNT):
     print(scratch[j])
