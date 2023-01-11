@@ -68,7 +68,7 @@ mem32[ADC_CS] = 0
 
 # compute mean and standard deviation
 total = sum(scratch)
-total2 = sum(s*s for s in scratch)
+total2 = sum(s * s for s in scratch)
 mean = total / COUNT
 variance = total2 / COUNT - (mean * mean)
 sd = math.sqrt(variance)
