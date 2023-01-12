@@ -103,5 +103,13 @@ while mem32[CH0_CTRL_TRIG] & BUSY:
 mem32[PIO0_CTRL] = 0x0
 mem32[PWM_EN] = 0x0
 
+# verify that all symbols were shown an equal number of times
+
+counts = {}
 for j in range(COUNT):
-    print(scratch[j])
+    if not scratch[j] in counts:
+        counts[scratch[j]] = 0
+    counts[scratch[j]] += 1
+
+for j in sorted(counts):
+    print(j, counts[j])
