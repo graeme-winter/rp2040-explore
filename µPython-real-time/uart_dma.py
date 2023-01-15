@@ -2,8 +2,8 @@ from uctypes import addressof
 from machine import UART, Pin, mem32
 import time
 
-uart0 = UART(0, baudrate=115200, tx=Pin(0), rx=Pin(1))
-uart1 = UART(1, baudrate=115200, tx=Pin(8), rx=Pin(9))
+uart0 = UART(0, baudrate=1000000, tx=Pin(0), rx=Pin(1))
+uart1 = UART(1, baudrate=1000000, tx=Pin(8), rx=Pin(9))
 
 # DMA to get the data from the input buffer to the UART watching
 # DREQ 20/21/22/23 TX/RX for UART0/1. Input pacing will be to keep
@@ -63,18 +63,23 @@ CH1_CTRL_TRIG = DMA_BASE + 0x4C
 # bit 1 to indicate that this is a high priority channel (don't
 # know how much that will matter.)
 
+# enable UART0 DMA (RX)
 mem32[UART0DMACR] = 1 << 0
-mem32[UART1DMACR] = 1 << 1
 
 mem32[CH0_READ_ADDR] = UART0_DR
 mem32[CH0_WRITE_ADDR] = addressof(rx)
 mem32[CH0_TRANS_COUNT] = SIZE
+
 # quiet + dreq-uart0-rx + write-incr + enable (byte size default)
 mem32[CH0_CTRL_TRIG] = (1 << 21) + (21 << 15) + (1 << 5) + (1 << 1) + (1 << 0)
+
+# enable UART1 DMA (TX)
+mem32[UART1DMACR] = 1 << 1
 
 mem32[CH1_READ_ADDR] = addressof(tx)
 mem32[CH1_WRITE_ADDR] = UART1_DR
 mem32[CH1_TRANS_COUNT] = SIZE
+
 # quiet + dreq-uart0-rx + read-incr + enable (byte size default)
 mem32[CH1_CTRL_TRIG] = (1 << 21) + (22 << 15) + (1 << 4) + (1 << 1) + (1 << 0)
 
