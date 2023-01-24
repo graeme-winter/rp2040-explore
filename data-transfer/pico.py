@@ -19,17 +19,32 @@ CH0_READ_ADDR = DMA_BASE + 0x00
 CH0_WRITE_ADDR = DMA_BASE + 0x04
 CH0_TRANS_COUNT = DMA_BASE + 0x08
 CH0_CTRL_TRIG = DMA_BASE + 0x0C
+CH0_CTRL = DMA_BASE + 0x10
+
+CH1_READ_ADDR = DMA_BASE + 0x40
+CH1_WRITE_ADDR = DMA_BASE + 0x44
+CH1_TRANS_COUNT = DMA_BASE + 0x48
+CH1_CTRL_TRIG = DMA_BASE + 0x4C
+CH1_CTRL = DMA_BASE + 0x50
 
 mem32[UART0DMACR] = 1 << 1
+
+mem32[CH1_READ_ADDR] = addressof(tx)
+mem32[CH1_WRITE_ADDR] = UART0_DR
+mem32[CH1_TRANS_COUNT] = SIZE
+mem32[CH1_CTRL] = (1 << 21) + (20 << 15) + (1 << 4) + (1 << 1) + (1 << 0)
 
 mem32[CH0_READ_ADDR] = addressof(tx)
 mem32[CH0_WRITE_ADDR] = UART0_DR
 mem32[CH0_TRANS_COUNT] = SIZE
-mem32[CH0_CTRL_TRIG] = (1 << 21) + (20 << 15) + (1 << 4) + (1 << 1) + (1 << 0)
+mem32[CH0_CTRL_TRIG] = (1 << 21) + (20 << 15) + (1 << 11) + (1 << 4) + (1 << 1) + (1 << 0)
 
 BUSY = 1 << 24
 
 while mem32[CH0_CTRL_TRIG] & BUSY:
     continue
 
-print(f"Sent {SIZE} bytes")
+while mem32[CH1_CTRL_TRIG] & BUSY:
+    continue
+
+print(f"Sent {2 * SIZE} bytes")
