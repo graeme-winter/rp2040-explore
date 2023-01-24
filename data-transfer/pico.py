@@ -1,7 +1,7 @@
 from uctypes import addressof
 from machine import UART, Pin, mem32
 
-uart0 = UART(0, baudrate=115200 * 8, tx=Pin(16), rx=Pin(17))
+uart0 = UART(0, baudrate=115200 * 16, tx=Pin(16), rx=Pin(17))
 
 SIZE = 100_000
 

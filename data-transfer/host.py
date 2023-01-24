@@ -1,7 +1,7 @@
 import numpy
 import serial
 
-tty = serial.Serial("/dev/tty.usbmodem14101", 115200 * 8)
+tty = serial.Serial("/dev/tty.usbmodem14101", 115200 * 16)
 
 SIZE = 100_000
 
