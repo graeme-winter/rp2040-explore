@@ -30,7 +30,10 @@ CH1_TRANS_COUNT = DMA_BASE + 0x48
 CH1_CTRL_TRIG = DMA_BASE + 0x4C
 CH1_CTRL = DMA_BASE + 0x5C
 
+MULTI_CHAN_TRIGGER = DMA_BASE + 0x430
+
 pins = [Pin(j) for j in range(8)]
+led = Pin(25, Pin.OUT)
 
 
 @asm_pio(
@@ -64,15 +67,39 @@ for j in range(100):
     for k in range(1, 1000):
         data[j + 100 * k] = data[j]
 
+# FIXME run DMA in a second thread so the main thread could be used to
+# update the data array (say)
+
 # set up DMA
 #        QUIET         DREQ                 CHAIN      READ INCR   4-byte     ENABLE
 CTRL0 = (1 << 21) + (DREQ_PIO0_TX0 << 15) + (1 << 11) + (1 << 4) + (2 << 2) + (1 << 0)
-CTRL0 = (1 << 21) + (DREQ_PIO0_TX0 << 15) + (0 << 11) + (1 << 4) + (2 << 2) + (1 << 0)
+CTRL1 = (1 << 21) + (DREQ_PIO0_TX0 << 15) + (0 << 11) + (1 << 4) + (2 << 2) + (1 << 0)
 mem32[CH0_READ_ADDR] = addressof(data)
 mem32[CH0_WRITE_ADDR] = PIO0_TXF0
 mem32[CH0_TRANS_COUNT] = COUNT // 4
 mem32[CH0_CTRL] = CTRL0
+
 mem32[CH1_READ_ADDR] = addressof(data)
 mem32[CH1_WRITE_ADDR] = PIO0_TXF0
 mem32[CH1_TRANS_COUNT] = COUNT // 4
-mem32[CH1_CTRL] = CTRL0
+mem32[CH1_CTRL] = CTRL1
+
+# set up PIO
+sm0 = StateMachine(0, tick, freq=100_000, out_base=pins[0])
+
+# trigger DMA0 and PIO
+mem32[MULTI_CHAN_TRIGGER] = 1
+mem32[PIO0_CTRL] = 1
+
+BUSY = 1 << 24
+
+while True:
+    led.toggle()
+    while mem32[CH0_CTRL_TRIG] & BUSY:
+        continue
+    # set up CH0 again
+    mem32[CH0_CTRL] = CTRL0
+    while mem32[CH1_CTRL_TRIG] & BUSY:
+        continue
+    # set up CH1 again
+    mem32[CH1_CTRL] = CTRL1
