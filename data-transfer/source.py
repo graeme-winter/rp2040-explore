@@ -33,7 +33,7 @@ CH1_CTRL = DMA_BASE + 0x50
 MULTI_CHAN_TRIGGER = DMA_BASE + 0x430
 
 pins = [Pin(j) for j in range(8)]
-led = Pin(2, Pin.OUT)
+led = Pin(25, Pin.OUT)
 
 
 @asm_pio(
@@ -47,7 +47,7 @@ led = Pin(2, Pin.OUT)
         PIO.OUT_LOW,
         PIO.OUT_LOW,
     ),
-    out_shiftdir=PIO.SHIFT_LEFT,
+    out_shiftdir=PIO.SHIFT_RIGHT,
     fifo_join=PIO.JOIN_TX,
     autopull=True,
     pull_thresh=32,
@@ -62,10 +62,8 @@ def tick():
 COUNT = 100_000
 data = bytearray(COUNT)
 
-for j in range(1000):
-    data[j] = int(128 + 127 * math.sin(j * 2 * math.pi * 0.001))
-    for k in range(1, 100):
-        data[j + 1000 * k] = data[j]
+for j in range(100000):
+    data[j] = (j // 100) % 250
 
 # FIXME run DMA in a second thread so the main thread could be used to
 # update the data array (say)
@@ -86,7 +84,7 @@ mem32[CH1_TRANS_COUNT] = COUNT // 4
 mem32[CH1_CTRL] = CTRL1
 
 # set up PIO
-sm0 = StateMachine(0, tick, freq=100_000, out_base=pins[0])
+sm0 = StateMachine(0, tick, freq=100000, out_base=pins[0])
 
 # trigger DMA0 and PIO
 mem32[MULTI_CHAN_TRIGGER] = 1
