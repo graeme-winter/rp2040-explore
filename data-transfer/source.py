@@ -62,8 +62,8 @@ def tick():
 COUNT = 100_000
 data = bytearray(COUNT)
 
-for j in range(100000):
-    data[j] = (j // 100) % 250
+for j in range(100_000):
+    data[j] = (j // 10) % 250
 
 # FIXME run DMA in a second thread so the main thread could be used to
 # update the data array (say)
@@ -84,7 +84,7 @@ mem32[CH1_TRANS_COUNT] = COUNT // 4
 mem32[CH1_CTRL] = CTRL1
 
 # set up PIO
-sm0 = StateMachine(0, tick, freq=100000, out_base=pins[0])
+sm0 = StateMachine(0, tick, freq=10_000, out_base=pins[0])
 
 # trigger DMA0 and PIO
 mem32[MULTI_CHAN_TRIGGER] = 1
