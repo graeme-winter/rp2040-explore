@@ -1,5 +1,5 @@
 # sine wave data source -> generate 100,000 point sine wave buffer
-# and then push this out through pio0 at 100kHz -> divider of 
+# and then push this out through pio0 at 100kHz -> divider of
 # 1250 etc.
 
 import math
@@ -32,8 +32,18 @@ CH1_CTRL = DMA_BASE + 0x5C
 
 pins = [Pin(j) for j in range(8)]
 
+
 @asm_pio(
-    out_init=(PIO.OUT_LOW, PIO.OUT_LOW, PIO.OUT_LOW, PIO.OUT_LOW, PIO.OUT_LOW, PIO.OUT_LOW, PIO.OUT_LOW, PIO.OUT_LOW),
+    out_init=(
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+        PIO.OUT_LOW,
+    ),
     out_shiftdir=PIO.SHIFT_RIGHT,
     fifo_join=PIO.JOIN_TX,
     autopull=True,
