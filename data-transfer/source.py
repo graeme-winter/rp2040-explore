@@ -90,6 +90,8 @@ mem32[CH1_CTRL] = CTRL1
 sm0 = StateMachine(0, tick, freq=1_250_000, out_base=pins[0])
 
 BUSY = 1 << 24
+COUNT4 = COUNT // 4
+PTR = addressof(data)
 
 
 @micropython.viper
@@ -103,18 +105,18 @@ def go():
         while mem32[CH0_CTRL_TRIG] & BUSY:
             continue
         # set up CH0 again
-        mem32[CH0_READ_ADDR] = addressof(data)
+        mem32[CH0_READ_ADDR] = PTR
         mem32[CH0_WRITE_ADDR] = PIO0_TXF0
         mem32[CH0_CTRL] = CTRL0
-        mem32[CH0_TRANS_COUNT] = COUNT // 4
+        mem32[CH0_TRANS_COUNT] = COUNT4
         led.toggle()
         while mem32[CH1_CTRL_TRIG] & BUSY:
             continue
         # set up CH1 again
-        mem32[CH1_READ_ADDR] = addressof(data)
+        mem32[CH1_READ_ADDR] = PTR
         mem32[CH1_WRITE_ADDR] = PIO0_TXF0
         mem32[CH1_CTRL] = CTRL1
-        mem32[CH1_TRANS_COUNT] = COUNT // 4
+        mem32[CH1_TRANS_COUNT] = COUNT4
 
 
 _thread.start_new_thread(go, ())
