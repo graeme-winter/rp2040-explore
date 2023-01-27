@@ -1,6 +1,5 @@
-# sine wave data source -> generate 100,000 point sine wave buffer
-# and then push this out through pio0 at 100kHz -> divider of
-# 1250 etc.
+# sine wave data source -> generate 125,000 point sine wave buffer
+# and then push this out through pio0 at 1.25MHz
 
 import math
 from machine import Pin, mem32, UART
@@ -68,9 +67,6 @@ for j in range(1250):
     for k in range(1, 100):
         data[j + 1250 * k] = data[j]
 
-# FIXME run DMA in a second thread so the main thread could be used to
-# update the data array (say)
-
 # set up DMA
 #        QUIET         DREQ                 CHAIN      READ INCR   4-byte     ENABLE
 CTRL0 = (1 << 21) + (DREQ_PIO0_TX0 << 15) + (1 << 11) + (1 << 4) + (2 << 2) + (3 << 0)
@@ -116,4 +112,6 @@ def go():
         mem32[CH1_TRANS_COUNT] = COUNT4
 
 
+# run DMA in a second thread so the main thread could be used to
+# update the data array (say)
 _thread.start_new_thread(go, ())
