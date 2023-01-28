@@ -37,7 +37,9 @@ mem32[CH1_CTRL] = (1 << 21) + (20 << 15) + (1 << 4) + (1 << 1) + (1 << 0)
 mem32[CH0_READ_ADDR] = addressof(tx)
 mem32[CH0_WRITE_ADDR] = UART0_DR
 mem32[CH0_TRANS_COUNT] = SIZE
-mem32[CH0_CTRL_TRIG] = (1 << 21) + (20 << 15) + (1 << 11) + (1 << 4) + (1 << 1) + (1 << 0)
+mem32[CH0_CTRL_TRIG] = (
+    (1 << 21) + (20 << 15) + (1 << 11) + (1 << 4) + (1 << 1) + (1 << 0)
+)
 
 BUSY = 1 << 24
 
