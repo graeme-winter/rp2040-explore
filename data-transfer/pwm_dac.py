@@ -8,6 +8,9 @@ COUNT = const(100_000)
 data = bytearray(COUNT)
 PTR = addressof(data)
 
+# fill in a sine wave - reminded that this is uint32_t -> we have room for 25,000
+# observations, so 500 point scan, copied 50 times
+
 for j in range(500):
     x = int(125 + 124 * math.sin(0.002 * 2 * math.pi * j))
     for k in range(50):
@@ -48,7 +51,7 @@ CH1_CTRL = const(DMA_BASE + 0x50)
 MULTI_CHAN_TRIGGER = const(DMA_BASE + 0x430)
 
 
-#        QUIET         DREQ                 CHAIN      READ INCR   4-byte     ENABLE
+#        QUIET            DREQ                 CHAIN    READ INCR    4-byte     ENABLE
 CTRL0 = (1 << 21) + (DREQ_PWM_WRAP0 << 15) + (1 << 11) + (1 << 4) + (2 << 2) + (3 << 0)
 CTRL1 = (1 << 21) + (DREQ_PWM_WRAP0 << 15) + (0 << 11) + (1 << 4) + (2 << 2) + (3 << 0)
 
@@ -63,7 +66,6 @@ mem32[CH1_WRITE_ADDR] = CH_CC
 mem32[CH1_TRANS_COUNT] = COUNT // 4
 mem32[CH1_CTRL] = CTRL1
 
-
 mem32[CH_CSR] = 0x0
 mem32[CH_TOP] = 249
 mem32[CH_CC] = 0
@@ -75,7 +77,7 @@ led = Pin(25, Pin.OUT)
 
 @micropython.viper
 def go():
-    # trigger DMA0 and PIO
+    # trigger DMA0 and PWM
     mem32[MULTI_CHAN_TRIGGER] = 1
     mem32[PWM_EN] = 1
 
