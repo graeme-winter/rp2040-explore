@@ -3,7 +3,7 @@ import serial
 from matplotlib import pyplot
 
 tty = serial.Serial("/dev/tty.usbmodem14101", 115200 * 16)
-SIZE = 100_000_000
+SIZE = 1_000_000
 bytes = tty.read(SIZE)
 tty.close()
 x = numpy.array(range(SIZE))
