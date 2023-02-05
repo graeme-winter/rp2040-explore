@@ -75,7 +75,6 @@ BUSY = 1 << 24
 led = Pin(25, Pin.OUT)
 
 
-@micropython.viper
 def go():
     # trigger DMA0 and PWM
     mem32[MULTI_CHAN_TRIGGER] = 1
