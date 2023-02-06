@@ -47,7 +47,7 @@ def asm(r0, r1, r2):
     label(on)
     sub(r2, r2, 1)
     cmp(r2, 0)
-    bgt(on)
+    bne(on)
 
     # 3 no-ops because 3 to jmp below?
     nop()
@@ -61,11 +61,11 @@ def asm(r0, r1, r2):
     label(off)
     sub(r2, r2, 1)
     cmp(r2, 0)
-    bgt(off)
+    bne(off)
 
     sub(r5, r5, 1)
     cmp(r5, 0)
-    bgt(cycle)
+    bne(cycle)
 
 
 led.on()
