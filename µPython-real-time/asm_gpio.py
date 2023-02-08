@@ -30,6 +30,12 @@ def asm(r0, r1, r2):
 
     # save the number of cycles to count to
     mov(r6, r1)
+    sub(r6, r6, 1)
+
+    # 10% duty cycle
+    mov(r3, 9)
+    mul(r3, r1)
+    sub(r3, r3, 1)
 
     # save the number of repeats
     mov(r5, r2)
@@ -38,13 +44,13 @@ def asm(r0, r1, r2):
     mov(r4, 1)
     mov(r2, 25)
     lsl(r4, r2)
-    add(r3, r4, 1)
+    add(r4, r4, 1)
 
     # start of cycle loop
     label(cycle)
 
     # switch on
-    str(r3, [r7, 0])
+    str(r4, [r7, 0])
     mov(r2, r6)
     label(on)
     sub(r2, r2, 1)
@@ -59,8 +65,8 @@ def asm(r0, r1, r2):
     nop()
 
     # switch off
-    str(r3, [r7, 0])
-    mov(r2, r6)
+    str(r4, [r7, 0])
+    mov(r2, r3)
     label(off)
     sub(r2, r2, 1)
     cmp(r2, 0)
@@ -72,4 +78,4 @@ def asm(r0, r1, r2):
     bne(cycle)
 
 
-asm(GPIO_OUT_XOR, 24, 0x7FFFFFFF)
+asm(GPIO_OUT_XOR, 25000, 100000)
