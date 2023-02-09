@@ -32,18 +32,6 @@ out_pin = machine.Pin(0, machine.Pin.OUT)
 out_pin.off()
 
 
-def dumb():
-    for j in range(20):
-        led.toggle()
-        time.sleep(0.5)
-
-
-def sio():
-    for j in range(20):
-        machine.mem32[GPIO_OUT_XOR] = 1 << 25
-        time.sleep(0.5)
-
-
 # set up DMA
 COUNT = 100
 buffer = array.array("I", [0 for j in range(COUNT)])
@@ -82,12 +70,6 @@ def count_high():
 
 
 sm = rp2.StateMachine(0, count_high, jmp_pin=out_pin)
-
-
-def count(sm, n, out_pin):
-    for j in range(n):
-        n = sm.get()
-        print("%d ns" % int((0xFFFFFFFF - n) * 16.0))
 
 
 @micropython.asm_thumb
