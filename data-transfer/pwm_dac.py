@@ -74,13 +74,15 @@ BUSY = 1 << 24
 
 led = Pin(25, Pin.OUT)
 
-
+# FIXME once abort implemented revisit viper / asm
 def go():
     # trigger DMA0 and PWM
     mem32[MULTI_CHAN_TRIGGER] = 1
     mem32[PWM_EN] = 1
 
     while True:
+        # FIXME add abort to loop here e.g. pull an IN pin HIGH
+
         led.toggle()
         while mem32[CH0_CTRL_TRIG] & BUSY:
             continue
