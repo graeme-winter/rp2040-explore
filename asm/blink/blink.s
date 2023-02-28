@@ -3,10 +3,11 @@
 .align 2
 main:
 start:
-	ldr r1, gpioc
 	mov r2, #5
+	ldr r1, gpioc0
 	str r2, [r1, #0x4]
-	str r2, [r1, #0xcc]
+	ldr r1, gpioc1
+	str r2, [r1, #0x4c]
 
 	ldr r1, gpiod
 	mov r2, #48
@@ -26,7 +27,8 @@ tick:
 	b loop
 
 .align 4
-gpioc:	.word 0x40014000
+gpioc0:	.word 0x40014000
+gpioc1:	.word 0x40014080
 gpiod:	.word 0x4001c000
 sio:	.word 0xd0000000
 led:	.word 0x2000001
