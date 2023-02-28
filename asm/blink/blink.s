@@ -2,7 +2,6 @@
 .global main
 .align 2
 main:
-start:
 	mov r2, #5
 	ldr r1, gpioc0
 	str r2, [r1, #0x4]
