@@ -59,7 +59,8 @@ int main() {
     dma_channel_configure(adc_dma, &adc_dmac, (volatile void *)&data,
                           (const volatile void *)&(adc_hw->fifo), SIZE, false);
 
-    // kick everything off
+    // kick everything off - draininng FIFO first
+    adc_fifo_drain();
     dma_channel_start(adc_dma);
     adc_run(true);
     dma_channel_wait_for_finish_blocking(adc_dma);
