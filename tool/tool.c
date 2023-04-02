@@ -1,21 +1,20 @@
-#include <stdio.h>
+#include "hardware/dma.h"
+#include "hardware/pio.h"
+#include "hardware/timer.h"
 #include "pico.h"
 #include "pico/stdlib.h"
-#include "hardware/pio.h"
-#include "hardware/dma.h"
-#include "hardware/timer.h"
+#include <stdio.h>
 
-int main()
-{
-    unsigned int counter = 0;
+int main() {
+  unsigned int counter = 0;
 
-    stdio_init_all();
+  stdio_init_all();
 
-    while (true) {
-        printf("Counter: %d\n", counter);
-        counter++;
-        sleep_ms(1000);
-    }
+  while (true) {
+    printf("Counter: %d\n", counter);
+    counter++;
+    sleep_ms(1000);
+  }
 
-    return 0;
+  return 0;
 }
