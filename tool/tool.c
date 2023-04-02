@@ -26,12 +26,12 @@ int main() {
   char buffer[80];
 
   stdio_init_all();
-  uart_init(uart0, 115200);
 
   gpio_set_function(UART_TX, GPIO_FUNC_UART);
   gpio_set_function(UART_RX, GPIO_FUNC_UART);
 
   // UART configuration
+  uart_init(uart0, 115200);
   int baud = uart_set_baudrate(uart0, 115200);
   uart_set_hw_flow(uart0, false, false);
   uart_set_format(uart0, 8, 1, UART_PARITY_NONE);
@@ -52,9 +52,10 @@ int main() {
   channel_config_set_dreq(&adc_dmac, DREQ_ADC);
   channel_config_set_read_increment(&adc_dmac, false);
   channel_config_set_write_increment(&adc_dmac, true);
-  printf("Get ready to read\n");
-  sleep_ms(10000);
   while (true) {
+    printf("Reading from stdin\n");
+    scanf("%79s", buffer);
+    printf("Read %s\n", buffer);
     dma_channel_configure(adc_dma, &adc_dmac, (volatile void *)&data,
                           (const volatile void *)&(adc_hw->fifo), SIZE, false);
 
@@ -64,10 +65,9 @@ int main() {
     dma_channel_wait_for_finish_blocking(adc_dma);
     adc_run(false);
 
-    printf("To USB: %d\n", counter);
-    printf("  sending %d bytes to UART @ %d\n", SIZE, baud);
+    printf("Sending %d bytes to UART @ %d\n", SIZE, baud);
     uart_write_blocking(uart0, data, SIZE);
-    printf("  done\n");
+    printf("Done\n");
     counter++;
   }
 
