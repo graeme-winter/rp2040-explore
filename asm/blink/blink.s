@@ -19,7 +19,6 @@ main:
 loop:
 	str r2, [r1, #0x1c]
 	ldr r0, count
-	nop
 tick:
 	sub r0, r0, #1
 	cmp r0, #0
@@ -32,4 +31,4 @@ gpioc1:	.word 0x40014080
 gpiod:	.word 0x4001c000
 sio:	.word 0xd0000000
 led:	.word 0x2000001
-count:	.word 30
+count:	.word 15624999
