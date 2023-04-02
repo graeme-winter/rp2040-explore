@@ -43,7 +43,6 @@ int main() {
   adc_fifo_setup(true, true, 1, false, true);
   adc_set_clkdiv(0);
 
-
   // ADC DMA configuration
   unsigned int adc_dma;
   dma_channel_config adc_dmac;
@@ -55,15 +54,14 @@ int main() {
   channel_config_set_write_increment(&adc_dmac, true);
   while (true) {
     dma_channel_configure(adc_dma, &adc_dmac, (volatile void *)&data,
-                          (const volatile void *)&(adc_hw->fifo), SIZE,
-                          false);
+                          (const volatile void *)&(adc_hw->fifo), SIZE, false);
 
     // kick everything off
     dma_channel_start(adc_dma);
     adc_run(true);
-    dma_channel_wait_for_finish_blocking(adc_dma);                        
+    dma_channel_wait_for_finish_blocking(adc_dma);
     adc_run(false);
-  
+
     printf("To USB: %d\n", counter);
     printf("  sending %d bytes to UART @ %d\n", SIZE, baud);
     uart_write_blocking(uart0, data, SIZE);
