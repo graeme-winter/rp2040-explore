@@ -52,6 +52,8 @@ int main() {
   channel_config_set_dreq(&adc_dmac, DREQ_ADC);
   channel_config_set_read_increment(&adc_dmac, false);
   channel_config_set_write_increment(&adc_dmac, true);
+  printf("Get ready to read\n");
+  sleep_ms(10000);
   while (true) {
     dma_channel_configure(adc_dma, &adc_dmac, (volatile void *)&data,
                           (const volatile void *)&(adc_hw->fifo), SIZE, false);
@@ -65,8 +67,8 @@ int main() {
     printf("To USB: %d\n", counter);
     printf("  sending %d bytes to UART @ %d\n", SIZE, baud);
     uart_write_blocking(uart0, data, SIZE);
+    printf("  done\n");
     counter++;
-    sleep_ms(1000);
   }
 
   return 0;
